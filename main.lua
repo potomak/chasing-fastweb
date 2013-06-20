@@ -10,13 +10,13 @@ function love.load()
   Y_FLOOR = love.graphics.getHeight()/2
   X_BOUND = love.graphics.getWidth()*4
 
-  tree_image = love.graphics.newImage('assets/tree.png')
-  tree_image:setFilter('nearest', 'nearest')
+  treeImage = love.graphics.newImage('assets/tree.png')
+  treeImage:setFilter('nearest', 'nearest')
 
-  office_guy_sx = love.graphics.newImage('assets/office_guy_sx.png')
-  office_guy_sx:setFilter('nearest', 'nearest')
-  office_guy_dx = love.graphics.newImage('assets/office_guy_dx.png')
-  office_guy_dx:setFilter('nearest', 'nearest')
+  officeGuySx = love.graphics.newImage('assets/office_guy_sx.png')
+  officeGuySx:setFilter('nearest', 'nearest')
+  officeGuyDx = love.graphics.newImage('assets/office_guy_dx.png')
+  officeGuyDx:setFilter('nearest', 'nearest')
 
   camera:setBounds(0, -love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
 
@@ -27,20 +27,20 @@ function love.load()
   
   for _, i in ipairs({.5, 1, 2}) do
     local trees = {}
-    local trees_n = 10
+    local treesNum = 10
     local scale = i*8
 
-    for j = 1, trees_n do
+    for j = 1, treesNum do
       table.insert(trees, {
-        x = X_BOUND/trees_n * i * (j-1) - (tree_image:getWidth()*scale/2) + (love.graphics.getWidth()/2),
-        y = Y_FLOOR - tree_image:getWidth()*scale
+        x = X_BOUND/treesNum * i * (j-1) - (treeImage:getWidth()*scale/2) + (love.graphics.getWidth()/2),
+        y = Y_FLOOR - treeImage:getWidth()*scale
       })
     end
     
     camera:newLayer(i, function()
       for _, tree in ipairs(trees) do
         love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(tree_image, tree.x, tree.y, 0, scale)
+        love.graphics.draw(treeImage, tree.x, tree.y, 0, scale)
       end
     end)
   end
@@ -50,10 +50,10 @@ function love.load()
   p.height = 32
   p.x = 0
   p.y = Y_FLOOR - p.width
-  p.jumpSpeed = -600
-  p.runSpeed = 600
-  p.animationDx = newAnimation(office_guy_dx, 32, 32, 0.1, 0)
-  p.animationSx = newAnimation(office_guy_sx, 32, 32, 0.1, 0)
+  p.jumpSpeed = -500
+  p.runSpeed = 200
+  p.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
+  p.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
   p.animation = p.animationDx
 
   camera:newLayer(1, function() p:draw() end)
@@ -78,7 +78,7 @@ function love.draw()
     love.graphics.print("Player coordinates: ("..p.x..","..p.y..")", 5, 5)
     love.graphics.print("Current state: "..p.state, 5, 20)
     love.graphics.print("FPS: "..love.timer.getFPS(), 5, 35)
-    love.graphics.print("Player runSpeed (+/-): "..p.runSpeed.., 5, 50)
+    love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 50)
   end
 end
 
