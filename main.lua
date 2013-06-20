@@ -13,17 +13,14 @@ function love.load()
   treeImage = love.graphics.newImage('assets/tree.png')
   treeImage:setFilter('nearest', 'nearest')
 
-  officeGuySx = love.graphics.newImage('assets/office_guy_sx.png')
-  officeGuySx:setFilter('nearest', 'nearest')
-  officeGuyDx = love.graphics.newImage('assets/office_guy_dx.png')
-  officeGuyDx:setFilter('nearest', 'nearest')
-
   camera:setBounds(0, -love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
 
   camera:newLayer(.5, function()
     love.graphics.setColor(25, 200, 25)
     love.graphics.rectangle('fill', 0, Y_FLOOR, X_BOUND, love.graphics.getHeight())
   end)
+
+
   
   for _, i in ipairs({.5, 1, 2}) do
     local trees = {}
@@ -31,19 +28,25 @@ function love.load()
     local scale = i*8
 
     for j = 1, treesNum do
-      table.insert(trees, {
-        x = X_BOUND/treesNum * i * (j-1) - (treeImage:getWidth()*scale/2) + (love.graphics.getWidth()/2),
-        y = Y_FLOOR - treeImage:getWidth()*scale
-      })
+      t = Tree:new()
+      t.x = X_BOUND/treesNum * i * (j-1) - (treeImage:getWidth()*scale/2) + (love.graphics.getWidth()/2)
+      t.y = Y_FLOOR - treeImage:getWidth()*scale
+      t.scale = scale
+      t.image = treeImage
+      table.insert(trees, t)
     end
-    
+
     camera:newLayer(i, function()
-      for _, tree in ipairs(trees) do
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(treeImage, tree.x, tree.y, 0, scale)
-      end
+     for _, tree in ipairs(trees) do
+        tree:draw()
+     end
     end)
   end
+
+  officeGuySx = love.graphics.newImage('assets/office_guy_sx.png')
+  officeGuySx:setFilter('nearest', 'nearest')
+  officeGuyDx = love.graphics.newImage('assets/office_guy_dx.png')
+  officeGuyDx:setFilter('nearest', 'nearest')
 
   p = Player:new()
   p.width = 32
