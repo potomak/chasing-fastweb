@@ -68,16 +68,23 @@ function Player:update(dt)
   if not(self.canJump) then
     if self.ySpeed < 0 then
       self.state = "jump"
+      self.animation:stop()
+      self.animation:seek(2)
     elseif self.ySpeed > 0 then
       self.state = "fall"
+      self.animation:seek(3)
     end
   else
     if self.xSpeed > 0 then
       self.state = "moveRight"
+      self.animation:play()
     elseif self.xSpeed < 0 then
       self.state = "moveLeft"
+      self.animation:play()
     else
       self.state = "stand"
+      self.animation:stop()
+      self.animation:seek(1)
     end
   end
 
