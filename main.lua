@@ -10,19 +10,19 @@ function love.load()
   Y_FLOOR = love.graphics.getHeight()/2
   X_BOUND = love.graphics.getWidth()*4
 
-  treeImage = love.graphics.newImage('assets/tree.png')
-  treeImage:setFilter('nearest', 'nearest')
-
   camera:setBounds(0, -love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
 
+  -- floor
   camera:newLayer(.5, function()
     love.graphics.setColor(25, 200, 25)
     love.graphics.rectangle('fill', 0, Y_FLOOR, X_BOUND, love.graphics.getHeight())
   end)
-
-
   
-  for _, i in ipairs({.5, 1, 2}) do
+  -- trees
+  treeImage = love.graphics.newImage('assets/tree.png')
+  treeImage:setFilter('nearest', 'nearest')
+
+  for _, i in ipairs({.5, 2}) do
     local trees = {}
     local treesNum = 10
     local scale = i*8
@@ -37,12 +37,36 @@ function love.load()
     end
 
     camera:newLayer(i, function()
-     for _, tree in ipairs(trees) do
+      for _, tree in ipairs(trees) do
         tree:draw()
-     end
+      end
     end)
   end
 
+  -- obstacles
+  obstacles = {}
+  obstaclesNum = 12
+
+  for i = 1, obstaclesNum do
+    table.insert(obstacles, {
+      x = X_BOUND/obstaclesNum * (i-1) - (32/2) + (love.graphics.getWidth()/2),
+      y = Y_FLOOR - 32
+    })
+  end
+
+  camera:newLayer(1, function()
+    for _, obstacle in ipairs(obstacles) do
+      love.graphics.setColor(128, 128, 128)
+      love.graphics.rectangle('fill', obstacle.x, obstacle.y, 32, 32)
+
+      love.graphics.setColor(255, 255, 255)
+      if DEBUG then
+        love.graphics.point(obstacle.x, obstacle.y)
+      end
+    end
+  end)
+
+  -- player
   officeGuySx = love.graphics.newImage('assets/office_guy_sx.png')
   officeGuySx:setFilter('nearest', 'nearest')
   officeGuyDx = love.graphics.newImage('assets/office_guy_dx.png')

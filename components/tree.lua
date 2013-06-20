@@ -19,4 +19,8 @@ end
 function Tree:draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(self.image, self.x, self.y, 0, self.scale)
+
+  if DEBUG then
+    love.graphics.point(self.x, self.y)
+  end
 end

@@ -58,8 +58,13 @@ function Player:update(dt)
   self.animation:update(dt)
 
   -- update the player's position
-  self.x = self.x + (self.xSpeed * dt)
-  self.y = self.y + (self.ySpeed * dt)
+  newX = self.x + (self.xSpeed * dt)
+  newY = self.y + (self.ySpeed * dt)
+
+  if not self:isColliding(newX, newY) then
+    self.x = newX
+    self.y = newY
+  end
 
   -- apply gravity
   self.ySpeed = self.ySpeed + (GRAVITY * dt)
@@ -98,4 +103,19 @@ end
 function Player:draw()
   love.graphics.setColor(255, 255, 255)
   self.animation:draw(self.x, self.y)
+
+  if DEBUG then
+    love.graphics.point(self.x, self.y)
+  end
+end
+
+-- see https://love2d.org/wiki/BoundingBox.lua
+function Player:isColliding(x, y)
+  for _, obstacle in ipairs(obstacles) do
+    if x < obstacle.x+32 and x+32 > obstacle.x and y < obstacle.y+32 and y+32 > obstacle.y then
+      return true
+    end
+  end
+
+  return false
 end
