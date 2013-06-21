@@ -68,7 +68,8 @@ function Player:update(dt)
   if not self:isColliding(self.x, newY) then
     self.y = newY
   else
-    self:hitFloor(self.y)
+    self.ySpeed = 0
+    self.canJump = true
   end
 
   -- apply gravity
@@ -114,15 +115,24 @@ function Player:draw()
   end
 end
 
--- see https://love2d.org/wiki/BoundingBox.lua
 function Player:isColliding(x, y)
-  return isColliding(playerOnCells(x, y))
+  local collision = false
+  local c = Component:new()
+  c.x = x
+  c.y = y
+  c.width = self.width
+  c.height = self.height
+  
+  for k, v in ipairs(c:onCells()) do
+    local x, y = v:match('(%d+),(%d+)')
+    x, y = tonumber(x), tonumber(y)
+    
+    if not map[y] or not map[y][x] then
+      collision = false -- off-map
+    elseif map[tonumber(y)][tonumber(x)] == 1 then
+      collision = true
+    end
+  end
 
-  -- for _, obstacle in ipairs(obstacles) do
-  --   if x < obstacle.x+32 and x+32 > obstacle.x and y < obstacle.y+32 and y+32 > obstacle.y then
-  --     return true
-  --   end
-  -- end
-  --
-  -- return false
+  return collision
 end
