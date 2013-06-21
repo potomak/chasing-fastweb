@@ -5,23 +5,15 @@ require 'components.component'
 require 'components.player'
 require 'components.tree'
 require 'components.forest'
+require 'components.tile'
+require 'components.map'
 
 function love.load()
   DEBUG = false
   GRAVITY = 1800
   Y_FLOOR = love.graphics.getHeight()/2
   X_BOUND = love.graphics.getWidth()*4
-  CELLSIZE=64
-
-  map = {
-    {0,0,0,0,0,0,0,0,0,0,},
-    {0,0,0,1,0,0,0,0,0,0,},
-    {0,0,0,0,0,0,0,0,1,0,},
-    {0,0,0,0,0,0,0,1,0,0,},
-    {0,0,0,1,0,0,0,0,0,0,},
-    {0,0,0,0,0,0,1,0,0,0,},
-    {1,1,1,1,1,1,1,1,1,1,},
-  }
+  CELLSIZE = 64
 
   camera:setBounds(0, -love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
 
@@ -57,19 +49,19 @@ function love.load()
   end
 
   -- obstacles
-  camera:newLayer(1, function()
-    for y = 1, #map do
-      for x = 1, #map[y] do
-        if map[y][x] == 1 then
-          love.graphics.rectangle('fill', x*CELLSIZE, y*CELLSIZE, CELLSIZE, CELLSIZE)
-        else
-          if DEBUG then
-            love.graphics.rectangle('line', x*CELLSIZE, y*CELLSIZE, CELLSIZE, CELLSIZE)
-          end
-        end
-      end
-    end
-  end)
+  rockImage = love.graphics.newImage("assets/rock.png")
+  rockImage:setFilter("nearest", "nearest")
+  rockTile = Tile:new()
+  rockTile.image = rockImage
+
+  m = Map:new()
+  m.tileMap = {
+    {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
+    {0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
+  }
+  m.tiles = { rockTile }
+
+  camera:newLayer(1, function() m:draw() end)
 
   -- player
   officeGuySx = love.graphics.newImage('assets/office_guy_sx.png')
@@ -112,38 +104,29 @@ function love.draw()
     love.graphics.print("FPS: "..love.timer.getFPS(), 5, 35)
     love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 50)
 
-    -- Gets the x- and y-position of the mouse.
+    local c = Component:new()
+    c.x = p.x
+    c.y = p.y
+    c.width = p.width
+    c.height = p.height
+    love.graphics.print(string.format("Player occupies cells(%d): %s", #c:onCells(), table.concat(c:onCells(), ' | ')), 5, 65)
+
     local x, y = love.mouse.getPosition()
-    -- Draws the position on screen.
     love.graphics.print("("..x..","..y..")", x, y)
   end
 end
 
 function love.keyreleased(key)
-  if key == "escape" then
-    love.event.quit()
-  end
-  if (key == "right") or (key == "left") then
-    p:stop()
-  end
+  if key == "escape" or key == "q" then love.event.quit() end
+  if key == "right" or key == "left" then p:stop() end
 
-  if key == "d" then
-    DEBUG = not DEBUG
-  end
+  if key == "d" then DEBUG = not DEBUG end
 
   if DEBUG then
-    if key == "up" then
-      Y_FLOOR = Y_FLOOR - 10
-    end
-    if key == "down" then
-      Y_FLOOR = Y_FLOOR + 10
-    end
-    if key == "+" then
-      p.runSpeed = p.runSpeed + 10
-    end
-    if key == "-" then
-      p.runSpeed = p.runSpeed - 10
-    end
+    if key == "up" then Y_FLOOR = Y_FLOOR - 10 end
+    if key == "down" then Y_FLOOR = Y_FLOOR + 10 end
+    if key == "+" then p.runSpeed = p.runSpeed + 10 end
+    if key == "-" then p.runSpeed = p.runSpeed - 10 end
   end
 end
 

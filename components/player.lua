@@ -68,15 +68,15 @@ function Player:update(dt)
   if not self:isColliding(self.x, newY) then
     self.y = newY
   else
+    self.canJump = self.ySpeed > 0
     self.ySpeed = 0
-    self.canJump = true
   end
 
   -- apply gravity
   self.ySpeed = self.ySpeed + (GRAVITY * dt)
 
   -- update the player's state
-  if not(self.canJump) then
+  if not self.canJump then
     if self.ySpeed < 0 then
       self.state = "jump"
       self.animation:stop()
@@ -102,7 +102,7 @@ function Player:update(dt)
   -- stop the player when they hit the borders
   if self.x > X_BOUND - self.width then self.x = X_BOUND - self.width end
   if self.x < 0 then self.x = 0 end
-  if self.y < 0 then self.y = 0 end
+  if self.y < -1 * self.width*4 then self.y = -1 * self.width*4 end
   if self.y > Y_FLOOR - self.height then self:hitFloor(Y_FLOOR) end
 end
 
@@ -127,10 +127,12 @@ function Player:isColliding(x, y)
     local x, y = v:match('(%d+),(%d+)')
     x, y = tonumber(x), tonumber(y)
     
-    if not map[y] or not map[y][x] then
-      collision = false -- off-map
-    elseif map[tonumber(y)][tonumber(x)] == 1 then
-      collision = true
+    if x and y then
+      if not m.tileMap[y+1] or not m.tileMap[y+1][x+1] then
+        collision = false -- off-map
+      elseif m.tileMap[y+1][x+1] ~= 0 then
+        collision = true
+      end
     end
   end
 
