@@ -111,6 +111,11 @@ function love.draw()
     love.graphics.print("Current state: "..p.state, 5, 20)
     love.graphics.print("FPS: "..love.timer.getFPS(), 5, 35)
     love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 50)
+
+    -- Gets the x- and y-position of the mouse.
+    local x, y = love.mouse.getPosition()
+    -- Draws the position on screen.
+    love.graphics.print("("..x..","..y..")", x, y)
   end
 end
 
