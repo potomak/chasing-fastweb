@@ -1,6 +1,6 @@
 -- Map class
 Map = class('Map')
-Map.static.TILE_SIZE = 64
+Map.static.TILE_SIZE = 48
 
 -- Constructor
 function Map:initialize()
