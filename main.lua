@@ -1,3 +1,4 @@
+require 'lib.middleclass'
 require 'lib.AnAL'
 require 'lib.camera'
 
@@ -13,19 +14,18 @@ function love.load()
   GRAVITY = 1800
   Y_FLOOR = love.graphics.getHeight()/2
   X_BOUND = love.graphics.getWidth()*4
-  CELLSIZE = 64
 
   camera:setBounds(0, -love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
 
   -- floor
   camera:newLayer(.5, function()
     love.graphics.setColor(25, 200, 25)
-    love.graphics.rectangle('fill', 0, Y_FLOOR, X_BOUND, love.graphics.getHeight())
+    love.graphics.rectangle("fill", 0, Y_FLOOR, X_BOUND, love.graphics.getHeight())
   end)
   
   -- trees
-  treeImage = love.graphics.newImage('assets/tree.png')
-  treeImage:setFilter('nearest', 'nearest')
+  treeImage = love.graphics.newImage("assets/tree.png")
+  treeImage:setFilter("nearest", "nearest")
 
   for _, i in ipairs({.5, 2}) do
     local trees = {}
@@ -64,18 +64,12 @@ function love.load()
   camera:newLayer(1, function() m:draw() end)
 
   -- player
-  officeGuySx = love.graphics.newImage('assets/office_guy_sx.png')
-  officeGuySx:setFilter('nearest', 'nearest')
-  officeGuyDx = love.graphics.newImage('assets/office_guy_dx.png')
-  officeGuyDx:setFilter('nearest', 'nearest')
+  officeGuySx = love.graphics.newImage("assets/office_guy_sx.png")
+  officeGuySx:setFilter("nearest", "nearest")
+  officeGuyDx = love.graphics.newImage("assets/office_guy_dx.png")
+  officeGuyDx:setFilter("nearest", "nearest")
 
-  p = Player:new()
-  p.width = 32
-  p.height = 32
-  p.x = 0
-  p.y = Y_FLOOR - p.width
-  p.jumpSpeed = -500
-  p.runSpeed = 200
+  p = Player:new(20, 32, 0, Y_FLOOR - 32, -500, 200)
   p.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
   p.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
   p.animation = p.animationDx
@@ -103,13 +97,7 @@ function love.draw()
     love.graphics.print("Current state: "..p.state, 5, 20)
     love.graphics.print("FPS: "..love.timer.getFPS(), 5, 35)
     love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 50)
-
-    local c = Component:new()
-    c.x = p.x
-    c.y = p.y
-    c.width = p.width
-    c.height = p.height
-    love.graphics.print(string.format("Player occupies cells(%d): %s", #c:onCells(), table.concat(c:onCells(), ' | ')), 5, 65)
+    love.graphics.print(string.format("Player occupies cells(%d): %s", #p:onCells(p.x, p.y), table.concat(p:onCells(p.x, p.y), " | ")), 5, 65)
 
     local x, y = love.mouse.getPosition()
     love.graphics.print("("..x..","..y..")", x, y)
@@ -128,8 +116,4 @@ function love.keyreleased(key)
     if key == "+" then p.runSpeed = p.runSpeed + 10 end
     if key == "-" then p.runSpeed = p.runSpeed - 10 end
   end
-end
-
-function posToTile(x, y)
-  return math.floor(x/CELLSIZE), math.floor(y/CELLSIZE)
 end

@@ -1,28 +1,20 @@
 -- Player class
-
-Player = {}
-Player.__index = Player
+Player = class('Player', Component)
 
 -- Constructor
-function Player:new()
-  -- define our parameters here
-  local player = {
-    x = 0,
-    y = 0,
-    width = 0,
-    height = 0,
-    jumpSpeed = 0,
-    runSpeed = 0,
-    xSpeed = 0,
-    ySpeed = 0,
-    state = "",
-    canJump = false,
-    animation = nil,
-    animationDx = nil,
-    animationSx = nil
-  }
-
-  return setmetatable(player, Player)
+function Player:initialize(width, height, x, y, jumpSpeed, runSpeed)
+  Component.initialize(self, width, height)
+  self.x = x
+  self.y = y
+  self.jumpSpeed = jumpSpeed
+  self.runSpeed = runSpeed
+  self.xSpeed = 0
+  self.ySpeed = 0
+  self.state = ""
+  self.canJump = false
+  self.animation = nil
+  self.animationDx = nil
+  self.animationSx = nil
 end
 
 -- Movement functions
@@ -108,22 +100,17 @@ end
 
 function Player:draw()
   love.graphics.setColor(255, 255, 255)
-  self.animation:draw(self.x, self.y)
+  self.animation:draw(self.x, self.y, 0, 1, 1, (self.animation.fw-self.width)/2)
 
   if DEBUG then
-    love.graphics.point(self.x, self.y)
+    love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
   end
 end
 
 function Player:isColliding(x, y)
   local collision = false
-  local c = Component:new()
-  c.x = x
-  c.y = y
-  c.width = self.width
-  c.height = self.height
   
-  for k, v in ipairs(c:onCells()) do
+  for k, v in ipairs(self:onCells(x, y)) do
     local x, y = v:match('(%d+),(%d+)')
     x, y = tonumber(x), tonumber(y)
     

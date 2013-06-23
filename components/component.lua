@@ -1,43 +1,34 @@
 -- Component class
-
-Component = {}
-Component.__index = Component
+Component = class('Component')
 
 -- Constructor
-function Component:new()
-  -- define our parameters here
-  local component = {
-    x = 0,
-    y = 0,
-    width = 0,
-    height = 0
-  }
-
-  return setmetatable(component, Component)
+function Component:initialize(width, height)
+  self.width = width
+  self.height = height
 end
 
-function Component:onCells()
+function Component:onCells(x, y)
   local cells = {}
-  local tx, ty = posToTile(self.x, self.y)
+  local tx, ty = posToTile(x, y)
   local key = tx..","..ty
   cells[key] = true
   cells[#cells+1] = key
 
-  tx, ty = posToTile(self.x+self.width, self.y)
+  tx, ty = posToTile(x+self.width, y)
   key = tx..","..ty
   if not cells[key] then
     cells[key] = true
     cells[#cells+1] = key
   end
 
-  tx, ty = posToTile(self.x+self.width, self.y+self.height)
+  tx, ty = posToTile(x+self.width, y+self.height)
   key = tx..","..ty
   if not cells[key] then
     cells[key] = true
     cells[#cells+1] = key
   end
 
-  tx, ty = posToTile(self.x, self.y+self.height)
+  tx, ty = posToTile(x, y+self.height)
   key = tx..","..ty
   if not cells[key] then
     cells[key] = true
@@ -45,4 +36,8 @@ function Component:onCells()
   end
   
   return cells
+end
+
+function posToTile(x, y)
+  return math.floor(x/Map.TILE_SIZE), math.floor(y/Map.TILE_SIZE)
 end
