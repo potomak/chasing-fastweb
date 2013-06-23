@@ -10,14 +10,15 @@ require 'components.tile'
 require 'components.map'
 
 function love.load()
-  DEBUG = false
+  DEBUG = true
   PLAYER_FOCUS = false
   STAGE_SPEED = 100
   GRAVITY = 1800
   Y_FLOOR = love.graphics.getHeight()/2
   X_BOUND = love.graphics.getWidth()*4
-  SHOW_BACKGROUND = false
-  SHOW_TREES = false
+  SHOW_BACKGROUND = true
+  SHOW_TREES = true
+  SHOW_TRUCK = true
 
   stageX = 0
 
@@ -78,13 +79,25 @@ function love.load()
   m = Map:new()
   m.tileMap = {
     {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
-    {0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
+    {0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
     {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
     {0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
   }
   m.tiles = { rockTile }
 
   camera:newLayer(1, function() m:draw() end)
+
+  -- truck
+  truck = love.graphics.newImage("assets/truck.png")
+  truck:setFilter("nearest", "nearest")
+  truckX = love.graphics.getWidth() - 16*4 - 20
+
+  camera:newLayer(1, function()
+    if SHOW_TRUCK then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(truck, truckX, Y_FLOOR - 16*4, 0, 4)
+    end
+  end)
 
   -- player
   officeGuySx = love.graphics.newImage("assets/office_guy_sx.png")
@@ -114,6 +127,8 @@ function love.update(dt)
   end
 
   stageY = p.y - love.graphics.getHeight()/2 + p.height/2
+
+  truckX = truckX + (STAGE_SPEED * dt)
   
   camera:setPosition(stageX, stageY)
 end
