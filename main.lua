@@ -11,11 +11,30 @@ require 'components.map'
 
 function love.load()
   DEBUG = false
+  PLAYER_FOCUS = false
+  STAGE_SPEED = 100
   GRAVITY = 1800
   Y_FLOOR = love.graphics.getHeight()/2
   X_BOUND = love.graphics.getWidth()*4
+  SHOW_BACKGROUND = false
+  SHOW_TREES = false
+
+  stageX = 0
 
   camera:setBounds(0, -love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
+
+  -- love.graphics.setBackgroundColor(220, 248, 244)
+
+  -- background
+  skyline = love.graphics.newImage("assets/skyline.gif")
+  skyline:setFilter("nearest", "nearest")
+
+  camera:newLayer(.5, function()
+    if SHOW_BACKGROUND then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(skyline, 0, 0, 0, 2)
+    end
+  end)
 
   -- floor
   camera:newLayer(.5, function()
@@ -42,8 +61,10 @@ function love.load()
     end
 
     camera:newLayer(i, function()
-      for _, tree in ipairs(trees) do
-        tree:draw()
+      if SHOW_TREES then
+        for _, tree in ipairs(trees) do
+          tree:draw()
+        end
       end
     end)
   end
@@ -58,6 +79,8 @@ function love.load()
   m.tileMap = {
     {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
     {0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
+    {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
+    {0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
   }
   m.tiles = { rockTile }
 
@@ -69,7 +92,7 @@ function love.load()
   officeGuyDx = love.graphics.newImage("assets/office_guy_dx.png")
   officeGuyDx:setFilter("nearest", "nearest")
 
-  p = Player:new(20, 32, 0, Y_FLOOR - 32, -500, 200)
+  p = Player:new(20, 32, 32, Y_FLOOR - 32, -500, 200)
   p.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
   p.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
   p.animation = p.animationDx
@@ -83,8 +106,16 @@ function love.update(dt)
   if love.keyboard.isDown("x") then p:jump() end
 
   p:update(dt)
+
+  if PLAYER_FOCUS then
+    stageX = p.x - love.graphics.getWidth()/2 + p.width/2
+  else
+    stageX = stageX + (STAGE_SPEED * dt)
+  end
+
+  stageY = p.y - love.graphics.getHeight()/2 + p.height/2
   
-  camera:setPosition(p.x - love.graphics.getWidth()/2 + p.width/2, p.y - love.graphics.getHeight()/2 + p.height/2)
+  camera:setPosition(stageX, stageY)
 end
 
 function love.draw()
@@ -115,5 +146,8 @@ function love.keyreleased(key)
     if key == "down" then Y_FLOOR = Y_FLOOR + 10 end
     if key == "+" then p.runSpeed = p.runSpeed + 10 end
     if key == "-" then p.runSpeed = p.runSpeed - 10 end
+    if key == "f" then PLAYER_FOCUS = not PLAYER_FOCUS end
+    if key == "b" then SHOW_BACKGROUND = not SHOW_BACKGROUND end
+    if key == "t" then SHOW_TREES = not SHOW_TREES end
   end
 end
