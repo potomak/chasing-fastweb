@@ -25,8 +25,6 @@ end
 
 function Map:print()
   for y = 1, #self.tileMap do
-    for x = 1, #self.tileMap[y] do
-      print(self.tileMap[y][x])
-    end
+    print(table.concat(self.tileMap[y], ", "))
   end
 end
