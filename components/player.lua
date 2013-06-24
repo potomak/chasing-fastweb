@@ -10,6 +10,8 @@ function Player:initialize(width, height, x, y, jumpSpeed, runSpeed)
   self.runSpeed = runSpeed
   self.xSpeed = 0
   self.ySpeed = 0
+  self.xAcc = 0
+  self.friction = 2
   self.state = ""
   self.canJump = false
   self.animation = nil
@@ -26,17 +28,17 @@ function Player:jump()
 end
 
 function Player:moveRight()
-  self.xSpeed = self.runSpeed
+  self.xAcc = self.runSpeed
   self.animation = self.animationDx
 end
 
 function Player:moveLeft()
-  self.xSpeed = -1 * (self.runSpeed)
+  self.xAcc = -1 * self.runSpeed
   self.animation = self.animationSx
 end
 
 function Player:stop()
-  self.xSpeed = 0
+  self.xAcc = 0
 end
 
 function Player:hitFloor(maxY)
@@ -50,11 +52,13 @@ function Player:update(dt)
   self.animation:update(dt)
 
   -- update the player's position
-  newX = self.x + (self.xSpeed * dt)
-  newY = self.y + (self.ySpeed * dt)
+  local newX = self.x + (self.xSpeed * dt)
+  local newY = self.y + (self.ySpeed * dt)
 
   if not self:isColliding(newX, self.y) then
     self.x = newX
+  else
+    self.xSpeed = 0
   end
 
   if not self:isColliding(self.x, newY) then
@@ -66,6 +70,13 @@ function Player:update(dt)
 
   -- apply gravity
   self.ySpeed = self.ySpeed + (GRAVITY * dt)
+  -- apply acceleration and friction
+  self.xSpeed = self.xSpeed + (self.xAcc * dt)
+  self.xSpeed = self.xSpeed * (1 - math.min(dt*self.friction, 1))
+
+  if self.xAcc == 0 and self.xSpeed < 10 and self.xSpeed > -10 then
+    self.xSpeed = 0
+  end
 
   -- update the player's state
   if not self.canJump then
