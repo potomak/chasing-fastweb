@@ -8,6 +8,7 @@ require 'components.truck'
 require 'components.tree'
 require 'components.tile'
 require 'components.map'
+require 'components.background'
 
 require 'scenes.scene'
 require 'scenes.splash'

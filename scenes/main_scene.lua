@@ -8,38 +8,22 @@ end
 function MainScene:load()
   love.graphics.setNewFont(12)
 
-  PLAYER_FOCUS = false
-  STAGE_SPEED = 100
-  GRAVITY = 1800
-  Y_FLOOR = love.graphics.getHeight()/2
-  X_BOUND = love.graphics.getWidth()*4
-  SHOW_BACKGROUND = true
-  SHOW_TREES = true
-  SHOW_TRUCK = true
+  world = World:new()
 
-  stageX = 0
-
-  camera:setBounds(0, -1 * love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
+  camera:setBounds(0, -1 * love.graphics.getHeight(), world.xBound - love.graphics.getWidth(), love.graphics.getHeight())
 
   -- background
-  if SHOW_BACKGROUND then
-    love.graphics.setBackgroundColor(220, 248, 244)
-  end
-
   skyline = love.graphics.newImage("assets/skyline.gif")
   skyline:setFilter("nearest", "nearest")
 
-  camera:newLayer(.5, function()
-    if SHOW_BACKGROUND then
-      love.graphics.setColor(255, 255, 255)
-      love.graphics.draw(skyline, 0, 0, 0, 2)
-    end
-  end)
+  background = Background:new(skyline, world.xBound - love.graphics.getWidth())
+
+  camera:newLayer(.25, function() background:draw() end)
 
   -- floor
   camera:newLayer(.5, function()
     love.graphics.setColor(25, 200, 25)
-    love.graphics.rectangle("fill", 0, Y_FLOOR, X_BOUND, love.graphics.getHeight())
+    love.graphics.rectangle("fill", 0, world.yFloor, world.xBound, love.graphics.getHeight())
   end)
   
   -- trees
@@ -53,8 +37,8 @@ function MainScene:load()
 
     for j = 1, treesNum do
       t = Tree:new()
-      t.x = X_BOUND/treesNum * i * (j-1) - (treeImage:getWidth()*scale/2) + (love.graphics.getWidth()/2)
-      t.y = Y_FLOOR - treeImage:getWidth()*scale
+      t.x = world.xBound/treesNum * i * (j-1) - (treeImage:getWidth()*scale/2) + (love.graphics.getWidth()/2)
+      t.y = world.yFloor - treeImage:getWidth()*scale
       t.scale = scale
       t.image = treeImage
       if i == 2 then t.alpha = 192 end
@@ -62,7 +46,7 @@ function MainScene:load()
     end
 
     camera:newLayer(i, function()
-      if SHOW_TREES then
+      if world.showTrees then
         for _, tree in ipairs(trees) do
           tree:draw()
         end
@@ -88,16 +72,13 @@ function MainScene:load()
   camera:newLayer(1, function() m:draw() end)
 
   -- truck
-  truck = love.graphics.newImage("assets/truck.png")
-  truck:setFilter("nearest", "nearest")
-  truckX = love.graphics.getWidth() - 16*4 - 20
+  truckImage = love.graphics.newImage("assets/truck.png")
+  truckImage:setFilter("nearest", "nearest")
 
-  camera:newLayer(1, function()
-    if SHOW_TRUCK then
-      love.graphics.setColor(255, 255, 255)
-      love.graphics.draw(truck, truckX, Y_FLOOR - 16*4, 0, 4)
-    end
-  end)
+  truck = Truck:new(16*4, 16*4, love.graphics.getWidth() - 16*4 - 20, world.yFloor - 16*4)
+  truck.image = truckImage
+
+  camera:newLayer(1, function() truck:draw() end)
 
   -- player
   officeGuySx = love.graphics.newImage("assets/office_guy_sx.png")
@@ -105,7 +86,7 @@ function MainScene:load()
   officeGuyDx = love.graphics.newImage("assets/office_guy_dx.png")
   officeGuyDx:setFilter("nearest", "nearest")
 
-  p = Player:new(20, 32, 32*4, Y_FLOOR - 32, -500, 400)
+  p = Player:new(20, 32, 32*4, world.yFloor - 32, -500, 400)
   p.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
   p.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
   p.animation = p.animationDx
@@ -114,23 +95,20 @@ function MainScene:load()
 end
 
 function MainScene:update(dt)
-  if love.keyboard.isDown("right") then p:moveRight() end
-  if love.keyboard.isDown("left") then p:moveLeft() end
-  if love.keyboard.isDown("x") then p:jump() end
-
   p:update(dt)
+  world:update(dt)
+  truck:update(dt)
 
-  if PLAYER_FOCUS then
-    stageX = p.x - love.graphics.getWidth()/2 + p.width/2
+  local cameraX = 0
+  local cameraY = p.y - love.graphics.getHeight()/2 + p.height/2
+
+  if world.playerFocus then
+    cameraX = p.x - love.graphics.getWidth()/2 + p.width/2
   else
-    stageX = stageX + (STAGE_SPEED * dt)
+    cameraX = world.stageX
   end
 
-  stageY = p.y - love.graphics.getHeight()/2 + p.height/2
-
-  truckX = truckX + (STAGE_SPEED * dt)
-  
-  camera:setPosition(stageX, stageY)
+  camera:setPosition(cameraX, cameraY)
 end
 
 function MainScene:draw()
@@ -160,17 +138,12 @@ end
 function MainScene:keyreleased(key)
   Scene.keyreleased(self, key)
 
+  world:keyreleased(key)
+
   if key == "right" or key == "left" then p:stop() end
 
-  if key == "d" then DEBUG = not DEBUG end
-
   if DEBUG then
-    if key == "up" then Y_FLOOR = Y_FLOOR - 10 end
-    if key == "down" then Y_FLOOR = Y_FLOOR + 10 end
     if key == "+" then p.runSpeed = p.runSpeed + 10 end
     if key == "-" then p.runSpeed = p.runSpeed - 10 end
-    if key == "f" then PLAYER_FOCUS = not PLAYER_FOCUS end
-    if key == "b" then SHOW_BACKGROUND = not SHOW_BACKGROUND end
-    if key == "t" then SHOW_TREES = not SHOW_TREES end
   end
 end

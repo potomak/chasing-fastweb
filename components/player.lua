@@ -51,6 +51,10 @@ end
 function Player:update(dt)
   self.animation:update(dt)
 
+  if love.keyboard.isDown("right") then self:moveRight() end
+  if love.keyboard.isDown("left") then self:moveLeft() end
+  if love.keyboard.isDown("x") then self:jump() end
+
   -- update the player's position
   local newX = self.x + (self.xSpeed * dt)
   local newY = self.y + (self.ySpeed * dt)
@@ -69,7 +73,7 @@ function Player:update(dt)
   end
 
   -- apply gravity
-  self.ySpeed = self.ySpeed + (GRAVITY * dt)
+  self.ySpeed = self.ySpeed + (world.gravity * dt)
   -- apply acceleration and friction
   self.xSpeed = self.xSpeed + (self.xAcc * dt)
   self.xSpeed = self.xSpeed * (1 - math.min(dt*self.friction, 1))
@@ -103,10 +107,10 @@ function Player:update(dt)
   end
 
   -- stop the player when they hit the borders
-  if self.x > X_BOUND - self.width then self.x = X_BOUND - self.width end
+  if self.x > world.xBound - self.width then self.x = world.xBound - self.width end
   if self.x < 0 then self.x = 0 end
   if self.y < -1 * self.width*4 then self.y = -1 * self.width*4 end
-  if self.y > Y_FLOOR - self.height then self:hitFloor(Y_FLOOR) end
+  if self.y > world.yFloor - self.height then self:hitFloor(world.yFloor) end
 end
 
 function Player:draw()
