@@ -3,6 +3,10 @@ MainScene = class('MainScene', Scene)
 
 function MainScene:initialize(game)
   Scene.initialize(self, game)
+end
+
+function MainScene:load()
+  love.graphics.setNewFont(12)
 
   PLAYER_FOCUS = false
   STAGE_SPEED = 100
@@ -17,9 +21,11 @@ function MainScene:initialize(game)
 
   camera:setBounds(0, -1 * love.graphics.getHeight(), X_BOUND - love.graphics.getWidth(), love.graphics.getHeight())
 
-  -- love.graphics.setBackgroundColor(220, 248, 244)
-
   -- background
+  if SHOW_BACKGROUND then
+    love.graphics.setBackgroundColor(220, 248, 244)
+  end
+
   skyline = love.graphics.newImage("assets/skyline.gif")
   skyline:setFilter("nearest", "nearest")
 
@@ -51,6 +57,7 @@ function MainScene:initialize(game)
       t.y = Y_FLOOR - treeImage:getWidth()*scale
       t.scale = scale
       t.image = treeImage
+      if i == 2 then t.alpha = 192 end
       table.insert(trees, t)
     end
 
@@ -71,10 +78,10 @@ function MainScene:initialize(game)
 
   m = Map:new()
   m.tileMap = {
-    {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
-    {0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
-    {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
-    {0,0,0,1,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
+    {0,0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
   }
   m.tiles = { rockTile }
 
@@ -98,7 +105,7 @@ function MainScene:initialize(game)
   officeGuyDx = love.graphics.newImage("assets/office_guy_dx.png")
   officeGuyDx:setFilter("nearest", "nearest")
 
-  p = Player:new(20, 32, 32*2, Y_FLOOR - 32, -500, 200)
+  p = Player:new(20, 32, 32*4, Y_FLOOR - 32, -500, 400)
   p.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
   p.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
   p.animation = p.animationDx
@@ -128,23 +135,26 @@ end
 
 function MainScene:draw()
   camera:draw()
-  
+
   -- debug information
   if DEBUG then
     love.graphics.setColor(50, 50, 50, 180)
-    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), 100)
-    love.graphics.setNewFont(12)
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), 80)
     love.graphics.setColor(255, 255, 255, 180)
     love.graphics.print("Player coordinates: ("..p.x..","..p.y..")", 5, 5)
-    love.graphics.print("Current state: "..p.state, 5, 20)
-    love.graphics.print("FPS: "..love.timer.getFPS(), 5, 35)
-    love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 50)
-    love.graphics.print("Player xSpeed: "..p.xSpeed, 5, 65)
-    love.graphics.print(string.format("Player occupies cells(%d): %s", #p:onCells(p.x, p.y), table.concat(p:onCells(p.x, p.y), " | ")), 5, 80)
+    love.graphics.print("state: "..p.state, 5, 20)
+    love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 35)
+    love.graphics.print("Player xSpeed: "..p.xSpeed, 5, 50)
+    love.graphics.print(string.format("Player occupies cells(%d): %s", #p:onCells(p.x, p.y), table.concat(p:onCells(p.x, p.y), " | ")), 5, 65)
 
     local x, y = love.mouse.getPosition()
     love.graphics.print("("..x..","..y..")", x, y)
   end
+
+  love.graphics.setColor(50, 128, 50, 255)
+  love.graphics.rectangle("fill", love.graphics.getWidth() - 50, 0, love.graphics.getWidth(), 20)
+  love.graphics.setColor(255, 255, 255, 255)
+  love.graphics.print("FPS: "..love.timer.getFPS(), love.graphics.getWidth() - 50, 5)
 end
 
 function MainScene:keyreleased(key)

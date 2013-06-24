@@ -8,14 +8,11 @@ end
 
 function Game:addScene(scene, sceneName)
   self.scenes[sceneName] = scene
-  print("add scene: "..sceneName)
-  print(scene)
 end
 
 function Game:loadScene(sceneName)
   self.currentScene = self.scenes[sceneName]
-  print("load scene: "..sceneName)
-  print(self.currentScene)
+  self.currentScene:load()
 end
 
 function Game:draw()

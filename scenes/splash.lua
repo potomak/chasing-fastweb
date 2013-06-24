@@ -3,6 +3,9 @@ Splash = class('Splash', Scene)
 
 function Splash:initialize(game)
   Scene.initialize(self, game)
+end
+
+function Splash:load()
   self.dt_temp = 0
 
   -- Initialize font, and set it.
