@@ -4,6 +4,7 @@ require 'lib.camera'
 
 require 'components.component'
 require 'components.player'
+require 'components.truck'
 require 'components.tree'
 require 'components.tile'
 require 'components.map'
@@ -12,6 +13,7 @@ require 'scenes.scene'
 require 'scenes.splash'
 require 'scenes.main_scene'
 
+require 'world'
 require 'game'
 
 function love.load()
