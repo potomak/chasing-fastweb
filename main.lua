@@ -5,7 +5,6 @@ require 'lib.camera'
 require 'components.component'
 require 'components.player'
 require 'components.tree'
-require 'components.forest'
 require 'components.tile'
 require 'components.map'
 
@@ -16,15 +15,13 @@ require 'scenes.main_scene'
 require 'game'
 
 function love.load()
+  DEBUG = false
+
   game = Game:new()
-  splash = Splash:new(game)
-  game:addScene(splash, "splash")
-  mainScene = MainScene:new(game)
-  game:addScene(mainScene, "mainScene")
+  game:addScene(Splash:new(game), "splash")
+  game:addScene(MainScene:new(game), "mainScene")
   
   game:loadScene("splash")
-
-  DEBUG = true
 end
 
 function love.update(dt)
