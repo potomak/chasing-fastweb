@@ -131,13 +131,16 @@ function MainScene:draw()
   
   -- debug information
   if DEBUG then
+    love.graphics.setColor(50, 50, 50, 180)
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), 100)
     love.graphics.setNewFont(12)
-    love.graphics.setColor(255, 255, 255)
+    love.graphics.setColor(255, 255, 255, 180)
     love.graphics.print("Player coordinates: ("..p.x..","..p.y..")", 5, 5)
     love.graphics.print("Current state: "..p.state, 5, 20)
     love.graphics.print("FPS: "..love.timer.getFPS(), 5, 35)
     love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 50)
-    love.graphics.print(string.format("Player occupies cells(%d): %s", #p:onCells(p.x, p.y), table.concat(p:onCells(p.x, p.y), " | ")), 5, 65)
+    love.graphics.print("Player xSpeed: "..p.xSpeed, 5, 65)
+    love.graphics.print(string.format("Player occupies cells(%d): %s", #p:onCells(p.x, p.y), table.concat(p:onCells(p.x, p.y), " | ")), 5, 80)
 
     local x, y = love.mouse.getPosition()
     love.graphics.print("("..x..","..y..")", x, y)
