@@ -1,4 +1,0 @@
--- Forest class
-
-Forest = {}
-
