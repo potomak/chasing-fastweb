@@ -11,10 +11,17 @@ function World:initialize()
   self.showTrees = true
   self.showTruck = true
   self.stageX = 0
+  self.isRunning = true
+end
+
+function World:stop()
+  self.isRunning = false
 end
 
 function World:update(dt)
-  self.stageX = self.stageX + (self.stageSpeed * dt)
+  if self.isRunning then
+    self.stageX = self.stageX + (self.stageSpeed * dt)
+  end
 end
 
 function World:keyreleased(key)

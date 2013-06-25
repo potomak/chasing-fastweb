@@ -138,6 +138,7 @@ end
 function MainScene:keyreleased(key)
   Scene.keyreleased(self, key)
 
+  p:keyreleased(key)
   world:keyreleased(key)
 
   if key == "right" or key == "left" then p:stop() end

@@ -17,6 +17,7 @@ function Player:initialize(width, height, x, y, jumpSpeed, runSpeed)
   self.animation = nil
   self.animationDx = nil
   self.animationSx = nil
+  self.isDead = false
 end
 
 -- Movement functions
@@ -51,9 +52,10 @@ end
 function Player:update(dt)
   self.animation:update(dt)
 
-  if love.keyboard.isDown("right") then self:moveRight() end
-  if love.keyboard.isDown("left") then self:moveLeft() end
-  if love.keyboard.isDown("x") then self:jump() end
+  if not self.isDead then
+    if love.keyboard.isDown("right") then self:moveRight() end
+    if love.keyboard.isDown("left") then self:moveLeft() end
+  end
 
   -- update the player's position
   local newX = self.x + (self.xSpeed * dt)
@@ -106,6 +108,18 @@ function Player:update(dt)
     end
   end
 
+  -- stop animation if player is dead
+  if self.isDead then
+    self.animation:stop()
+    self.animation:seek(1)
+  end
+
+  -- hitting left bound kills player
+  if not self.isDead and self.x < world.stageX then
+    self.isDead = true
+    world:stop()
+  end
+
   -- stop the player when they hit the borders
   if self.x > world.xBound - self.width then self.x = world.xBound - self.width end
   if self.x < 0 then self.x = 0 end
@@ -115,10 +129,14 @@ end
 
 function Player:draw()
   love.graphics.setColor(255, 255, 255)
-  self.animation:draw(self.x, self.y, 0, 1, 1, (self.animation.fw-self.width)/2)
+  self.animation:draw(self.x, self.y, self:orientation(), 1, 1, self:offset())
 
   if DEBUG then
     love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
+    love.graphics.line(world.stageX, 0, world.stageX, love.graphics.getHeight())
+    love.graphics.print("("..math.floor(world.stageX)..")", world.stageX, 200)
+    love.graphics.line(self.x, 0, self.x, love.graphics.getHeight())
+    love.graphics.print("("..math.floor(self.x)..")", self.x, 200)
   end
 end
 
@@ -139,4 +157,26 @@ function Player:isColliding(x, y)
   end
 
   return collision
+end
+
+function Player:orientation()
+  if self.isDead then
+    return math.rad(90)
+  else
+    return math.rad(0)
+  end
+end
+
+function Player:offset()
+  if self.isDead then
+    return (self.animation.fw - self.width) / 2, self.height
+  else
+    return (self.animation.fw - self.width) / 2, 0
+  end
+end
+
+function Player:keyreleased(key)
+  if not self.isDead then
+    if key == "x" then self:jump() end
+  end
 end
