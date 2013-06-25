@@ -12,6 +12,12 @@ function World:initialize()
   self.showTruck = true
   self.stageX = 0
   self.isRunning = true
+
+  camera:setBounds(0, -1 * love.graphics.getHeight(), self.xBound - love.graphics.getWidth(), love.graphics.getHeight())
+end
+
+function World:newLayer(scale, draw)
+  camera:newLayer(scale, draw)
 end
 
 function World:stop()
@@ -19,9 +25,24 @@ function World:stop()
 end
 
 function World:update(dt)
+  local cameraX = 0
+  local cameraY = p.y - love.graphics.getHeight()/2 + p.height/2
+
+  if self.playerFocus then
+    cameraX = p.x - love.graphics.getWidth()/2 + p.width/2
+  else
+    cameraX = self.stageX
+  end
+
+  camera:setPosition(cameraX, cameraY)
+
   if self.isRunning then
     self.stageX = self.stageX + (self.stageSpeed * dt)
   end
+end
+
+function World:draw()
+  camera:draw()
 end
 
 function World:keypressed(key)

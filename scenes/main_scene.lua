@@ -10,18 +10,16 @@ function MainScene:load()
 
   world = World:new()
 
-  camera:setBounds(0, -1 * love.graphics.getHeight(), world.xBound - love.graphics.getWidth(), love.graphics.getHeight())
-
   -- background
   skyline = love.graphics.newImage("assets/skyline.gif")
   skyline:setFilter("nearest", "nearest")
 
   background = Background:new(skyline, world.xBound - love.graphics.getWidth())
 
-  camera:newLayer(.25, function() background:draw() end)
+  world:newLayer(.25, function() background:draw() end)
 
   -- floor
-  camera:newLayer(.5, function()
+  world:newLayer(.5, function()
     love.graphics.setColor(25, 200, 25)
     love.graphics.rectangle("fill", 0, world.yFloor, world.xBound, love.graphics.getHeight())
   end)
@@ -45,7 +43,7 @@ function MainScene:load()
       table.insert(trees, t)
     end
 
-    camera:newLayer(i, function()
+    world:newLayer(i, function()
       if world.showTrees then
         for _, tree in ipairs(trees) do
           tree:draw()
@@ -69,7 +67,7 @@ function MainScene:load()
   }
   m.tiles = { rockTile }
 
-  camera:newLayer(1, function() m:draw() end)
+  world:newLayer(1, function() m:draw() end)
 
   -- truck
   truckImage = love.graphics.newImage("assets/truck.png")
@@ -78,7 +76,7 @@ function MainScene:load()
   truck = Truck:new(16*4, 16*4, love.graphics.getWidth() - 16*4 - 20, world.yFloor - 16*4)
   truck.image = truckImage
 
-  camera:newLayer(1, function() truck:draw() end)
+  world:newLayer(1, function() truck:draw() end)
 
   -- player
   officeGuySx = love.graphics.newImage("assets/office_guy_sx.png")
@@ -91,28 +89,22 @@ function MainScene:load()
   p.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
   p.animation = p.animationDx
 
-  camera:newLayer(1, function() p:draw() end)
+  world:newLayer(1, function() p:draw() end)
+
+  -- score
+  score = Score:new()
 end
 
 function MainScene:update(dt)
   p:update(dt)
   world:update(dt)
   truck:update(dt)
-
-  local cameraX = 0
-  local cameraY = p.y - love.graphics.getHeight()/2 + p.height/2
-
-  if world.playerFocus then
-    cameraX = p.x - love.graphics.getWidth()/2 + p.width/2
-  else
-    cameraX = world.stageX
-  end
-
-  camera:setPosition(cameraX, cameraY)
+  score:update(dt)
 end
 
 function MainScene:draw()
-  camera:draw()
+  world:draw()
+  score:draw()
 
   -- debug information
   if DEBUG then
@@ -141,7 +133,7 @@ end
 
 function MainScene:keypressed(key)
   Scene.keypressed(self, key)
-  
+
   p:keypressed(key)
   world:keypressed(key)
 

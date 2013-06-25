@@ -9,6 +9,7 @@ require 'components.tree'
 require 'components.tile'
 require 'components.map'
 require 'components.background'
+require 'components.score'
 
 require 'scenes.scene'
 require 'scenes.splash'
