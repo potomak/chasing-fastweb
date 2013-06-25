@@ -21,6 +21,9 @@ require 'game'
 function love.load()
   DEBUG = false
 
+  titleFont = love.graphics.newFont("assets/font.ttf", 40)
+  font = love.graphics.newFont("assets/font.ttf", 20)
+
   game = Game:new()
   game:addScene(Splash:new(game), "splash")
   game:addScene(MainScene:new(game), "mainScene")

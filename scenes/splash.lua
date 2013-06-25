@@ -7,10 +7,6 @@ end
 
 function Splash:load()
   self.dt_temp = 0
-
-  -- Initialize font, and set it.
-  self.font = love.graphics.newFont("assets/font.ttf", 40)
-  love.graphics.setFont(self.font)
 end
 
 function Splash:update(dt)
@@ -23,6 +19,7 @@ function Splash:update(dt)
 end
 
 function Splash:draw()
+  love.graphics.setFont(titleFont)
   love.graphics.printf("Chasing FASTWEB", 0, (-1*40) + (self.dt_temp/2.5) * (love.graphics.getHeight()/2), love.graphics.getWidth(), "center")
 end
 
@@ -31,6 +28,6 @@ end
 
 function Splash:keypressed(key)
   Scene.keypressed(self, key)
-  
+
   self.game:loadScene("mainScene")
 end
