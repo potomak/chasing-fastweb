@@ -6,15 +6,27 @@ function Truck:initialize(width, height, x, y)
   self.x = x
   self.y = y
   self.image = nil
+  self.isRunning = true
+end
+
+function Truck:stop()
+  self.isRunning = false
 end
 
 function Truck:draw()
   if world.showTruck then
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.image, self.x, self.y, 0, 4)
+
+    if DEBUG then
+      love.graphics.line(self.x, 0, self.x, love.graphics.getHeight())
+      love.graphics.print("("..math.floor(self.x)..")", self.x, 200)
+    end
   end
 end
 
 function Truck:update(dt)
-  self.x = self.x + (world.stageSpeed * dt)
+  if self.isRunning then
+    self.x = self.x + (world.stageSpeed * dt)
+  end
 end

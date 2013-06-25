@@ -136,12 +136,14 @@ function MainScene:draw()
 end
 
 function MainScene:keyreleased(key)
-  Scene.keyreleased(self, key)
-
   p:keyreleased(key)
-  world:keyreleased(key)
+end
 
-  if key == "right" or key == "left" then p:stop() end
+function MainScene:keypressed(key)
+  Scene.keypressed(self, key)
+  
+  p:keypressed(key)
+  world:keypressed(key)
 
   if DEBUG then
     if key == "+" then p.runSpeed = p.runSpeed + 10 end

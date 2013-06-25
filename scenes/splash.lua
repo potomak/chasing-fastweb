@@ -27,7 +27,10 @@ function Splash:draw()
 end
 
 function Splash:keyreleased(key)
-  Scene.keyreleased(self, key)
+end
 
+function Splash:keypressed(key)
+  Scene.keypressed(self, key)
+  
   self.game:loadScene("mainScene")
 end

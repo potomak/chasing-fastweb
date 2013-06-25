@@ -24,7 +24,7 @@ function World:update(dt)
   end
 end
 
-function World:keyreleased(key)
+function World:keypressed(key)
   if DEBUG then
     if key == "up" then self.yFloor = self.yFloor - 10 end
     if key == "down" then self.yFloor = self.yFloor + 10 end

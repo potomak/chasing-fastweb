@@ -18,6 +18,7 @@ function Player:initialize(width, height, x, y, jumpSpeed, runSpeed)
   self.animationDx = nil
   self.animationSx = nil
   self.isDead = false
+  self.reachedTruck = false
 end
 
 -- Movement functions
@@ -52,7 +53,7 @@ end
 function Player:update(dt)
   self.animation:update(dt)
 
-  if not self.isDead then
+  if self:canMove() then
     if love.keyboard.isDown("right") then self:moveRight() end
     if love.keyboard.isDown("left") then self:moveLeft() end
   end
@@ -108,8 +109,8 @@ function Player:update(dt)
     end
   end
 
-  -- stop animation if player is dead
-  if self.isDead then
+  -- stop animation if player is dead or has reached truck
+  if not self:canMove() then
     self.animation:stop()
     self.animation:seek(1)
   end
@@ -120,10 +121,18 @@ function Player:update(dt)
     world:stop()
   end
 
+  -- hitting left bound kills player
+  if not self.reachedTruck and self.x > truck.x then
+    self.reachedTruck = true
+    self.xSpeed = 0
+    world:stop()
+    truck:stop()
+  end
+
   -- stop the player when they hit the borders
   if self.x > world.xBound - self.width then self.x = world.xBound - self.width end
   if self.x < 0 then self.x = 0 end
-  if self.y < -1 * self.width*4 then self.y = -1 * self.width*4 end
+  if self.y < -1 * self.height*4 then self.y = -1 * self.height*4 end
   if self.y > world.yFloor - self.height then self:hitFloor(world.yFloor) end
 end
 
@@ -175,8 +184,16 @@ function Player:offset()
   end
 end
 
+function Player:canMove()
+  return not self.isDead and not self.reachedTruck
+end
+
 function Player:keyreleased(key)
-  if not self.isDead then
+  if key == "right" or key == "left" then p:stop() end
+end
+
+function Player:keypressed(key)
+  if self:canMove() then
     if key == "x" then self:jump() end
   end
 end

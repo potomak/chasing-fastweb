@@ -26,3 +26,7 @@ end
 function Game:keyreleased(key)
   self.currentScene:keyreleased(key)
 end
+
+function Game:keypressed(key)
+  self.currentScene:keypressed(key)
+end
