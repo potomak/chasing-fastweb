@@ -48,6 +48,10 @@ function camera:setY(value)
   end
 end
 
+function camera:getPosition()
+  return self._x, self._y
+end
+
 function camera:setPosition(x, y)
   if x then self:setX(x) end
   if y then self:setY(y) end
