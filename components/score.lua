@@ -13,7 +13,7 @@ end
 
 function Score:update(dt)
   if self.isRunning then
-    self.value = math.floor(world.xBound - world.stageX)
+    self.value = math.floor(world.xBound - (world.stageX + love.graphics.getWidth()))
   end
 end
 
