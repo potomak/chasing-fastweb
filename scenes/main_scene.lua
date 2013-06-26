@@ -12,7 +12,6 @@ function MainScene:load()
 
   -- background
   skyline = love.graphics.newImage("assets/skyline.gif")
-  skyline:setFilter("nearest", "nearest")
 
   background = Background:new(skyline, world.xBound - love.graphics.getWidth())
 
@@ -26,7 +25,6 @@ function MainScene:load()
   
   -- trees
   treeImage = love.graphics.newImage("assets/tree.png")
-  treeImage:setFilter("nearest", "nearest")
 
   for _, i in ipairs({.5, 2}) do
     local trees = {}
@@ -54,7 +52,6 @@ function MainScene:load()
 
   -- obstacles
   rockImage = love.graphics.newImage("assets/rock.png")
-  rockImage:setFilter("nearest", "nearest")
   rockTile = Tile:new()
   rockTile.image = rockImage
 
@@ -71,7 +68,6 @@ function MainScene:load()
 
   -- truck
   truckImage = love.graphics.newImage("assets/truck.png")
-  truckImage:setFilter("nearest", "nearest")
 
   truck = Truck:new(16*4, 16*4, love.graphics.getWidth() - 16*4 - 20, world.yFloor - 16*4)
   truck.image = truckImage
@@ -80,9 +76,7 @@ function MainScene:load()
 
   -- player
   officeGuySx = love.graphics.newImage("assets/office_guy_sx.png")
-  officeGuySx:setFilter("nearest", "nearest")
   officeGuyDx = love.graphics.newImage("assets/office_guy_dx.png")
-  officeGuyDx:setFilter("nearest", "nearest")
 
   p = Player:new(20, 32, 32*4, world.yFloor - 32, -500, 400)
   p.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
