@@ -45,4 +45,8 @@ end
 
 function love.keypressed(key)
   game:keypressed(key)
+
+  if DEBUG then
+    if key == "c" then debug.debug() end
+  end
 end
