@@ -21,6 +21,8 @@ require 'game'
 function love.load()
   DEBUG = false
 
+  love.graphics.setDefaultImageFilter("nearest", "nearest")
+
   titleFont = love.graphics.newFont("assets/font.ttf", 40)
   font = love.graphics.newFont("assets/font.ttf", 20)
 
