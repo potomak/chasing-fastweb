@@ -29,4 +29,10 @@ function Truck:update(dt)
   if self.isRunning then
     self.x = self.x + (world.stageSpeed * dt)
   end
+
+  if self.x > world.xBound then
+    player.isDead = true
+    score.value = 0
+    world:stop()
+  end
 end
