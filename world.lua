@@ -27,10 +27,10 @@ end
 
 function World:update(dt)
   local cameraX = 0
-  local cameraY = p.y - love.graphics.getHeight()/2 + p.height/2
+  local cameraY = player.y - love.graphics.getHeight()/2 + player.height/2
 
   if self.playerFocus then
-    cameraX = p.x - love.graphics.getWidth()/2 + p.width/2
+    cameraX = player.x - love.graphics.getWidth()/2 + player.width/2
   else
     cameraX = self.stageX
   end

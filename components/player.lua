@@ -118,6 +118,7 @@ function Player:update(dt)
   -- hitting left bound kills player
   if not self.isDead and self.x < world.stageX then
     self.isDead = true
+    score.value = 0
     world:stop()
   end
 
@@ -157,9 +158,9 @@ function Player:isColliding(x, y)
     x, y = tonumber(x), tonumber(y)
     
     if x and y then
-      if not m.tileMap[y+1] or not m.tileMap[y+1][x+1] then
+      if not map.tileMap[y+1] or not map.tileMap[y+1][x+1] then
         collision = false -- off-map
-      elseif m.tileMap[y+1][x+1] ~= 0 then
+      elseif map.tileMap[y+1][x+1] ~= 0 then
         collision = true
       end
     end
@@ -189,11 +190,16 @@ function Player:canMove()
 end
 
 function Player:keyreleased(key)
-  if key == "right" or key == "left" then p:stop() end
+  if key == "right" or key == "left" then self:stop() end
 end
 
 function Player:keypressed(key)
   if self:canMove() then
     if key == "x" then self:jump() end
+  end
+
+  if DEBUG then
+    if key == "+" then self.runSpeed = self.runSpeed + 10 end
+    if key == "-" then self.runSpeed = self.runSpeed - 10 end
   end
 end

@@ -55,16 +55,16 @@ function MainScene:load()
   rockTile = Tile:new()
   rockTile.image = rockImage
 
-  m = Map:new()
-  m.tileMap = {
+  map = Map:new()
+  map.tileMap = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
     {0,0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,},
   }
-  m.tiles = { rockTile }
+  map.tiles = { rockTile }
 
-  world:newLayer(1, function() m:draw() end)
+  world:newLayer(1, function() map:draw() end)
 
   -- truck
   truckImage = love.graphics.newImage("assets/truck.png")
@@ -78,19 +78,19 @@ function MainScene:load()
   officeGuySx = love.graphics.newImage("assets/office_guy_sx.png")
   officeGuyDx = love.graphics.newImage("assets/office_guy_dx.png")
 
-  p = Player:new(20, 32, 32*4, world.yFloor - 32, -500, 400)
-  p.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
-  p.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
-  p.animation = p.animationDx
+  player = Player:new(20, 32, 32*4, world.yFloor - 32, -500, 400)
+  player.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
+  player.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
+  player.animation = player.animationDx
 
-  world:newLayer(1, function() p:draw() end)
+  world:newLayer(1, function() player:draw() end)
 
   -- score
   score = Score:new()
 end
 
 function MainScene:update(dt)
-  p:update(dt)
+  player:update(dt)
   world:update(dt)
   truck:update(dt)
   score:update(dt)
@@ -105,34 +105,28 @@ function MainScene:draw()
     love.graphics.setColor(50, 50, 50, 180)
     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), 80)
     love.graphics.setColor(255, 255, 255, 180)
-    love.graphics.print("Player coordinates: ("..p.x..","..p.y..")", 5, 5)
-    love.graphics.print("state: "..p.state, 5, 20)
-    love.graphics.print("Player runSpeed (+/-): "..p.runSpeed, 5, 35)
-    love.graphics.print("Player xSpeed: "..p.xSpeed, 5, 50)
-    love.graphics.print(string.format("Player occupies cells(%d): %s", #p:onCells(p.x, p.y), table.concat(p:onCells(p.x, p.y), " | ")), 5, 65)
+    love.graphics.print("Player coordinates: ("..player.x..","..player.y..")", 5, 5)
+    love.graphics.print("state: "..player.state, 5, 20)
+    love.graphics.print("Player runSpeed (+/-): "..player.runSpeed, 5, 35)
+    love.graphics.print("Player xSpeed: "..player.xSpeed, 5, 50)
+    love.graphics.print(string.format("Player occupies cells(%d): %s", #player:onCells(player.x, player.y), table.concat(player:onCells(player.x, player.y), " | ")), 5, 65)
 
     local x, y = love.mouse.getPosition()
     love.graphics.print("("..x..","..y..")", x, y)
   end
 
-  love.graphics.setColor(50, 128, 50, 255)
-  love.graphics.rectangle("fill", love.graphics.getWidth() - 50, 0, love.graphics.getWidth(), 20)
-  love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.print("FPS: "..love.timer.getFPS(), love.graphics.getWidth() - 50, 5)
+  love.graphics.setFont(font)
+  love.graphics.setColor(30, 30, 30)
+  love.graphics.print("FPS: "..love.timer.getFPS(), love.graphics.getWidth() - 80, 5)
 end
 
 function MainScene:keyreleased(key)
-  p:keyreleased(key)
+  player:keyreleased(key)
 end
 
 function MainScene:keypressed(key)
   Scene.keypressed(self, key)
 
-  p:keypressed(key)
+  player:keypressed(key)
   world:keypressed(key)
-
-  if DEBUG then
-    if key == "+" then p.runSpeed = p.runSpeed + 10 end
-    if key == "-" then p.runSpeed = p.runSpeed - 10 end
-  end
 end
