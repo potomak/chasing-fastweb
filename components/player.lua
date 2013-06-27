@@ -19,6 +19,7 @@ function Player:initialize(width, height, x, y, jumpSpeed, runSpeed)
   self.animationSx = nil
   self.isDead = false
   self.reachedTruck = false
+  self.jumpSound = nil
 end
 
 -- Movement functions
@@ -26,6 +27,7 @@ function Player:jump()
   if self.canJump then
     self.ySpeed = self.jumpSpeed
     self.canJump = false
+    love.audio.play(self.jumpSound)
   end
 end
 

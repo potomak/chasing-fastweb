@@ -6,8 +6,6 @@ function MainScene:initialize(game)
 end
 
 function MainScene:load()
-  love.graphics.setNewFont(12)
-
   world = World:new()
 
   -- background
@@ -82,6 +80,7 @@ function MainScene:load()
   player.animationDx = newAnimation(officeGuyDx, 32, 32, 0.1, 0)
   player.animationSx = newAnimation(officeGuySx, 32, 32, 0.1, 0)
   player.animation = player.animationDx
+  player.jumpSound = love.audio.newSource("assets/jump.ogg", "static")
 
   world:newLayer(1, function() player:draw() end)
 
