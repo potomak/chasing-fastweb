@@ -1,4 +1,4 @@
--- Component class
+-- Splash class
 Splash = class('Splash', Scene)
 
 function Splash:initialize(game)
