@@ -8,6 +8,9 @@ end
 function MainScene:load()
   world = World:new()
 
+  -- restart
+  self.showRestart = false
+
   -- background
   skyline = love.graphics.newImage("assets/skyline.gif")
 
@@ -117,6 +120,11 @@ function MainScene:draw()
   love.graphics.setFont(font)
   love.graphics.setColor(30, 30, 30)
   love.graphics.print("FPS: "..love.timer.getFPS(), love.graphics.getWidth() - 80, 5)
+
+  if self.showRestart then
+    love.graphics.setFont(titleFont)
+    love.graphics.printf("You "..self.showRestart, 0, love.graphics.getHeight()/2, love.graphics.getWidth(), "center")
+  end
 end
 
 function MainScene:keyreleased(key)
@@ -128,4 +136,6 @@ function MainScene:keypressed(key)
 
   player:keypressed(key)
   world:keypressed(key)
+
+  if key == " " then game:restart() end
 end

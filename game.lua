@@ -30,3 +30,23 @@ end
 function Game:keypressed(key)
   self.currentScene:keypressed(key)
 end
+
+function Game:lose()
+  world:stop()
+  score:stop()
+  player.isDead = true
+  score.value = 0
+
+  self.currentScene.showRestart = 'lose'
+end
+
+function Game:win()
+  world:stop()
+  truck:stop()
+
+  self.currentScene.showRestart = 'win'
+end
+
+function Game:restart()
+  self:loadScene("mainScene")
+end

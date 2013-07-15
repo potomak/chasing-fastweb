@@ -22,7 +22,6 @@ end
 
 function World:stop()
   self.isRunning = false
-  score:stop()
 end
 
 function World:update(dt)

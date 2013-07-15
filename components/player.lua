@@ -119,17 +119,14 @@ function Player:update(dt)
 
   -- hitting left bound kills player
   if not self.isDead and self.x < world.stageX then
-    self.isDead = true
-    score.value = 0
-    world:stop()
+    game:lose()
   end
 
-  -- hitting left bound kills player
+  -- hit the truck to win the game
   if not self.reachedTruck and self.x > truck.x then
     self.reachedTruck = true
     self.xSpeed = 0
-    world:stop()
-    truck:stop()
+    game:win()
   end
 
   -- stop the player when they hit the borders

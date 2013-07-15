@@ -31,8 +31,6 @@ function Truck:update(dt)
   end
 
   if self.x > world.xBound then
-    player.isDead = true
-    score.value = 0
-    world:stop()
+    game:lose()
   end
 end
