@@ -11,7 +11,7 @@ osxapp=~/Downloads/love.app
 company=potomak
 game=chasing_fastweb
 sources=*.lua **/*.lua
-res=assets/*.png assets/*.gif assets/*.ttf
+res=assets/*.png assets/*.gif assets/*.ttf assets/*.ogg
 
 .PHONY : run test love clean win
 
